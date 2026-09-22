@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Stock alert</title>
+            <style>
+                body{font-family:Arial;padding:15px;background:#bd1852;}
+                table{width:100%;background:blueviolet;border-collapse:collapse;border-radius:8px;overflow:hidden;}
+                th,td{padding:10px;border-bottom:1px solid#9840e0;text-align:left;}
+                .low{background:#550f0f;}
+                .ok{background:#dfe6df;}
+                input{padding:8px;width:90%;margin:5px 0;border-radius:5px;border:1px solid #819e2a;}
+                button{padding:8px 12px;background:#ecf0f5;color:rgb(42, 153, 167);border:none;border-radius:5px;}
+                </style>
+                </head>
+                <body>
+                    <h2>Stock & Expiry Alert Dashboard</h2>
+                    <p>Built by [Kangu Laurein]-JS</p>
+                    <input type="text" id="search" placeholder="Search product..." onkeyup="filterStock()">
+                    <table>
+                        <tr><th>product</th><th>Qty</th><th>Expiry</th><th>Status</th></tr>
+                        <tbody id="StockBody"></tbody>
+                    </table>
+                    <h3>Add product (Demo)</h3>
+                    <input id="pname" placeholder="Product name">
+                    <input id="pqty" type="number" placeholder="Quantity">
+                    <input id="pexp" type="date">
+                    <button onclick="addProduct()">Add</button>
+                    <script>
+                        let Stock=[
+                            {name:"Yoghurt",qty:10, expiry:"2026-09-25"},
+                            {name:"Milk", qty:10, expiry:"2026-09-18"},
+                            {name:"Flour 2kg", qty:15, expiry:"2027-01-10"},
+                            {name:"Bread", qty:1, expiry:"2026-09-17"},
+                        ];
+                        function showStock(list=Stock){
+                            let html="";
+                            list.forEach(s=>{
+                                let Status=s.qty < 5 ? "LOW STOCK" : "OK";
+                                let cls=s.qty < 5 ? "low" : "ok";
+                                // check expiry close
+                                let today = new Date();
+                                let exp = new Date(s.expiry);
+                                let diffDays = (exp - today)/(1000*60*60*24);
+                                if(diffDays < 3) {status += "EXPIRING!"; cls="low";}
+                                html+='<tr class="${cls}"><td>${s.name}</td><td>${s.qty}</td><td>${s.expiry}</td><td>${status}</td></tr>';
+                            });
+                            document.getElementById("stockBody").innerHTML=html;
+                        }
+                        function filterStock (){
+                            let q= document.getElementById("search").value.toLowerCase();
+                            let filtered = Stock.filter(s=>s.name.toLowerCase().includes(q));
+                            showStock(filtered);
+                        }
+                        function addProduct(){
+                            let n = document.getElementById("pname").value;
+                            let q =document.getElementById("pqty").value;
+                            let e =document.getElementById("pexp").value;
+                            if (n && q && e){
+                                Stock.push({name:n, qty:parseInt(q), expiry:e});
+                                showStock();
+                            }
+                        }
+                        showStock();
+                    </script>
+                </body>
+                </html>
